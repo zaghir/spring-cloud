@@ -1,0 +1,20 @@
+
+
+url  => fund-api
+http://localhost:8200/fund/detailsByFeign/name/EUR/currency/MAD
+
+url  => fund-api      par la gatway
+http://localhost:8765/fund-api/fund/detailsByFeign/name/NATIXIS/currency/MAD
+
+
+url => currency-api
+http://localhost:8101/currency/exchange/from/EUR/to/USD
+
+url  => eureka
+http://localhost:8761/
+
+url  => zipkin server
+http://localhost:9411/zipkin
+
+url  => zipkin install   clique sur last version pour recuperer le jar zipkin server 
+https://zipkin.io/pages/quickstart.html
