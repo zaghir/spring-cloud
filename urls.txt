@@ -18,3 +18,4 @@ http://localhost:9411/zipkin
 
 url  => zipkin install   clique sur last version pour recuperer le jar zipkin server 
 https://zipkin.io/pages/quickstart.html
+
