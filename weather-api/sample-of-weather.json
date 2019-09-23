@@ -1,0 +1,34 @@
+{
+    "message":"accurate",
+    "cod":"200",
+    "count":5,
+    "list":[
+        {
+            "id":2643743,
+            "name":"London",
+            "coord":{
+                "lat":51.5073,
+                "lon":-0.1277
+            },
+            "main":{
+                "temp":15.92,
+                "pressure":1012,
+                "humidity":72,
+                "temp_min":14,
+                "temp_max":17.78
+            },
+            "dt":1569229761,
+            "wind":{
+                "speed":4.6,
+                "deg":240
+            },
+            "sys":{
+                "country":"GB"
+            },
+            "rain":null,
+            "snow":null,
+            "clouds":{"all":35},
+            "weather":[
+                {"id":802,"main":"Clouds","description":"partiellement nuageux","icon":"03d"}]
+            },
+            {"id":6058560,"name":"London","coord":{"lat":42.9886,"lon":-81.2467},"main":{"temp":21.51,"pressure":1008,"humidity":77,"temp_min":20.56,"temp_max":22.22},"dt":1569229773,"wind":{"speed":5.7,"deg":210},"sys":{"country":"CA"},"rain":null,"snow":null,"clouds":{"all":90},"weather":[{"id":804,"main":"Clouds","description":"couvert","icon":"04n"}]},{"id":4298960,"name":"London","coord":{"lat":37.129,"lon":-84.0833},"main":{"temp":18.15,"pressure":1019,"humidity":77,"temp_min":14,"temp_max":21},"dt":1569229783,"wind":{"speed":2.23,"deg":196.741},"sys":{"country":"US"},"rain":null,"snow":null,"clouds":{"all":1},"weather":[{"id":800,"main":"Clear","description":"ciel dégagé","icon":"01n"}]},{"id":4517009,"name":"London","coord":{"lat":39.8864,"lon":-83.4483},"main":{"temp":20.11,"pressure":1014,"humidity":93,"temp_min":18.33,"temp_max":22},"dt":1569229784,"wind":{"speed":3.1,"deg":250},"sys":{"country":"US"},"rain":{"1h":0.46},"snow":null,"clouds":{"all":75},"weather":[{"id":500,"main":"Rain","description":"légère pluie","icon":"10n"}]},{"id":4119617,"name":"London","coord":{"lat":35.329,"lon":-93.253},"main":{"temp":23.08,"pressure":1016,"humidity":94,"temp_min":22.22,"temp_max":23.89},"dt":1569229892,"wind":{"speed":0.3,"deg":260.059},"sys":{"country":"US"},"rain":null,"snow":null,"clouds":{"all":20},"weather":[{"id":801,"main":"Clouds","description":"peu nuageux","icon":"02n"}]}]}

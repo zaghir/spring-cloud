@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -21,6 +22,7 @@ public class WeatherController {
 	private ConfigurationWeatherApi configurationWeatherApi;
 	private static final Logger LOGGER = LoggerFactory.getLogger(WeatherController.class);
 	
+	private static final String URL_WEATHER_API="http://api.openweathermap.org/data/2.5";
 	
 	
 //	@GetMapping("/weather")
@@ -32,24 +34,47 @@ public class WeatherController {
 //		r.setWind(new Wind(1.5,300.0));
 //		return r ;
 //	}
-	@GetMapping("/weather")
-	@HystrixCommand(defaultFallback="fallToleranceGetWeather")
-	public Flux<ResultApiWeather> getWeather(){		
-		//api.openweathermap.org/data/2.5/find?q=casablanca&units=metric&lang=fr
-		WebClient webClient = WebClient.create("api.openweathermap.org");
-		webClient.head().attribute("APPID", "1970d4a97a00c1ed84ae8bb36a712c20");
-		Flux<ResultApiWeather> result = webClient.get()
-	            .uri("/data/2.5/find?q=casablanca&units=metric&lang=fr")
-	            .accept(MediaType.APPLICATION_JSON)
-	            .retrieve().bodyToFlux(ResultApiWeather.class);
+	@GetMapping("/weather/city/{city}")
+	//@HystrixCommand(defaultFallback="fallToleranceGetWeather")
+	public ResultApiWeather getWeather(@PathVariable String city){	
+		//http://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=1970d4a97a00c1ed84ae8bb36a712c20
+		//api.openweathermap.org/data/2.5/find?q=casablanca&units=metric&lang=fr&APPID=1970d4a97a00c1ed84ae8bb36a712c20
+//		WebClient webClient = WebClient.create("api.openweathermap.org");
+//		webClient.head().attribute("APPID", "1970d4a97a00c1ed84ae8bb36a712c20");
+//		Flux<ResultApiWeather> result = webClient.get()
+//	            .uri("/data/2.5/find?q=casablanca&units=metric&lang=fr")
+//	            .accept(MediaType.APPLICATION_JSON)
+//	            .retrieve().bodyToFlux(ResultApiWeather.class);
+		WebClient.Builder webClientBuilder = WebClient.builder();
+		ResultApiWeather weather = null ;
+		try{
+			weather = webClientBuilder.baseUrl(URL_WEATHER_API).build()
+					.get()				
+					.uri(uriBuilder -> uriBuilder
+						    .path("/find")
+						    .queryParam("q", city)
+						    .queryParam("units", "metric")
+						    .queryParam("lang", "fr")
+						    .queryParam("APPID",  "1970d4a97a00c1ed84ae8bb36a712c20")
+						    .build())
+					.accept(MediaType.APPLICATION_JSON)
+					.retrieve()
+					.bodyToMono(ResultApiWeather.class)				
+					.block();
 
-		LOGGER.info("CurrencyExchangeServiceProxy:retrieveFund result ==> {}",result);
-		return result ;
+		}catch(Exception ex){
+			LOGGER.error(" getWeather() ==>  {}" , ex);
+		}
+		
+
+		LOGGER.info("ConfigurationWeatherApi:getWeather() result ==> {}",weather);
+		return weather ;
 
 	}
 	
 	public ResultApiWeather fallToleranceGetWeather(){
 		ResultApiWeather result = new ResultApiWeather();
+		LOGGER.error("ConfigurationWeatherApi fallToleranceGetWeather() error ==> {}"  );
 		result.setName("error");
 		return result ;
 	}
