@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.Config;
+import com.hazelcast.config.ManagementCenterConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.zaghir.cloud.currencyapi.bean.ExchangeValue;
@@ -53,7 +54,13 @@ public class HazelcastConfiguration {
 //		config.setInstanceName("hazelcast-e-currency-api");
 //		config.addMapConfig(mapConfig);
 		
+		/** configuer le management center pour le monitoring*/
+		ManagementCenterConfig mcfg = new ManagementCenterConfig();
+		mcfg.setEnabled(true);
+		mcfg.setUrl(env.getProperty("cach.managementCenter.url"));
+		
 		Config cfg = new Config();
+		cfg.setManagementCenterConfig(mcfg);
 		HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
 		Map<String, ExchangeValue> mapApiCurrency = instance.getMap(env.getProperty("cach.maps.currency-api"));
 		return instance;
@@ -62,6 +69,11 @@ public class HazelcastConfiguration {
 	@Bean(name="clientCachApiCurrency")
 	@DependsOn({"serverCachApiCurrency"})
 	public HazelcastInstance clientCachApiCurrency(){
+		/**
+		 *  - On a utiliser l'annotation @DependsOn car notre client a besoin d'ecouter une instance server
+		 *  de hazelcast c'est pour ca on cree une dependance au moment de la creation des bean par spring 
+		 *  et on lui demander de creer cle bean clientCachApiCurrency apres la creation de serverCachApiCurrency
+		 */
 		ClientConfig clientConfig = new ClientConfig();
 	    HazelcastInstance client = HazelcastClient.newHazelcastClient( clientConfig );
 	    return client ;
