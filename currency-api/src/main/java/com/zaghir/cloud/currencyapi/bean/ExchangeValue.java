@@ -1,8 +1,9 @@
 package com.zaghir.cloud.currencyapi.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ExchangeValue {
+public class ExchangeValue implements Serializable {
 	private Long id ;
 	private String from ;
 	private String to ;

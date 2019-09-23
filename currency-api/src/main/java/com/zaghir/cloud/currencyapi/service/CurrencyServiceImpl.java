@@ -1,10 +1,13 @@
 package com.zaghir.cloud.currencyapi.service;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -24,20 +27,16 @@ import com.zaghir.cloud.currencyapi.bean.ExchangeValue;
 public class CurrencyServiceImpl implements CurrencyService{
 	
 	private static final String URL_CURRENCY_API = "https://free.currconv.com/api/v7";
-	
-	private static final String MAP_CACH_CURRENCY_API = "map-curruency-api";
-	
+		
 	private static Logger LOGGER = LoggerFactory.getLogger(CurrencyServiceImpl.class);
 	
 	@Autowired
 	private Environment environment ;
 	
-	//@Autowired
-	private Config configHazelcast;
-	
-	//@Autowired
-	private ClientConfig configClientHazelcast;
-	
+	@Autowired
+	@Qualifier("clientCachApiCurrency")
+	private HazelcastInstance cachApiCurrencyClient;
+		
 	public ExchangeValue getCurrencyExchangeValueFromApi(String from , String to){
 		
 	// https://free.currconv.com/api/v7/convert?q=USD_PHP,PHP_USD&compact=ultra&apiKey=94f293efd8f2fd1160da
@@ -82,24 +81,30 @@ public class CurrencyServiceImpl implements CurrencyService{
 	}
 	
 	public ExchangeValue getEchangeValueFromCach(String from , String to){
-//		HazelcastInstance hazelcastClient = HazelcastClient.newHazelcastClient(configClientHazelcast);
-//		IMap< String , ExchangeValue> map = hazelcastClient.getMap(MAP_CACH_CURRENCY_API);
-//		ExchangeValue echangeValue = map.get(from+"_"+to);
-		ExchangeValue echangeValue=null;
+			
+        IMap<String, ExchangeValue> map = cachApiCurrencyClient.getMap(environment.getProperty("cach.maps.currency-api"));
+        for (Entry<String, ExchangeValue> entry : map.entrySet()) {
+        	LOGGER.info("from cach ----> key => {} valeu => {}" , entry.getKey() , entry.getValue() );
+        }
+		LOGGER.info("size-----------------------> {}" , map.size() );
+		ExchangeValue echangeValue = map.get(from+"_"+to);
+		//ExchangeValue echangeValue=null;
 		if(null == echangeValue){
 			/* On appelle l'api externe pour recupere le taux de change qui n 'existe pas dans le cach*/
 			echangeValue = getCurrencyExchangeValueFromApi( from ,  to);
 			
 			/* on registe l'objet dans le cach  */
-			//saveEchangeValueInCach(echangeValue);
+			saveEchangeValueInCach(echangeValue);
+		}else{
+			LOGGER.info("CurrencyServiceImpl getEchangeValueFromCach()  data from cach ====> {} " , echangeValue); 
 		}
 		return echangeValue ;
 	}
 	
 	public void saveEchangeValueInCach(ExchangeValue exchangeValue){
-		HazelcastInstance hazelcast = Hazelcast.newHazelcastInstance(configHazelcast);
-		IMap<String , ExchangeValue > map = hazelcast.getMap(MAP_CACH_CURRENCY_API) ;
-		map.put(exchangeValue.getFrom()+"_"+exchangeValue.getTo(), exchangeValue);
+        IMap<String , ExchangeValue> map = cachApiCurrencyClient.getMap(environment.getProperty("cach.maps.currency-api"));
+        map.put(exchangeValue.getFrom()+"_"+exchangeValue.getTo(), exchangeValue);
+        LOGGER.info("CurrencyServiceImpl saveEchangeValueInCach() ==> nouvelle valeur {}" ,exchangeValue);
 	}
 
 }
