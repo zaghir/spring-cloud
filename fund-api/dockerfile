@@ -1,0 +1,11 @@
+FROM java:8-jdk-alpine
+
+VOLUME /tmp
+
+COPY ./target/fund-api-0.0.1-SNAPSHOT.jar /users/ntahar2/workspace/
+
+WORKDIR /users/ntahar2/workspace
+
+RUN sh -c 'touch fund-api-0.0.1-SNAPSHOT.jar'
+
+ENTRYPOINT ["java","-jar","fund-api-0.0.1-SNAPSHOT.jar"]
