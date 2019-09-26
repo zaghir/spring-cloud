@@ -1,0 +1,37 @@
+version: '3'
+services:
+
+  eureka-server-container:
+    image: eureka-server-image:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+
+  currency-api:
+    image: currency-image
+    container_name: currency
+    links:
+      - eureka-server-container
+    ports:
+      - "8100:8100"
+
+  fund-api:
+    image: fund-image
+    container_name: fund
+    links:
+        - eureka-server-container
+        - currency-api
+    ports:
+        - "8200:8200"
+
+  weather-api:
+    image: weather-image
+    container_name: weather
+    links:
+        - eureka-server-container
+    ports:
+        - "8000:8000"
+volumes:
+  eurekaData:
+
+
