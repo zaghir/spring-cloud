@@ -1,0 +1,11 @@
+FROM java:8-jdk-alpine
+
+VOLUME /tmp
+
+COPY ./target/weather-api-0.0.1-SNAPSHOT.jar /users/ntahar2/workspace/
+
+WORKDIR /users/ntahar2/workspace
+
+RUN sh -c 'touch weather-api-0.0.1-SNAPSHOT.jar'
+
+ENTRYPOINT ["java","-jar","weather-api-0.0.1-SNAPSHOT.jar"]
